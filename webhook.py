@@ -16,8 +16,9 @@ STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
 DB_PATH = os.getenv("DB_PATH", "payments.db")
 
-if not STRIPE_SECRET_KEY or not STRIPE_WEBHOOK_SECRET:
-    raise RuntimeError("Missing Stripe keys in environment")
+if not STRIPE_SECRET_KEY:
+    raise RuntimeError("Missing STRIPE_SECRET_KEY in environment")
+# STRIPE_WEBHOOK_SECRET is allowed to be missing at startup
 
 stripe.api_key = STRIPE_SECRET_KEY
 
@@ -86,5 +87,6 @@ async def stripe_webhook(request: Request, stripe_signature: str = Header(None))
             # In production you'd map customer → discord ID
             # If you later want this, we can expand it cleanly
             pass
+
 
     return {"ok": True}
